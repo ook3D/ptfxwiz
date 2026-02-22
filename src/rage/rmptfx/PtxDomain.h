@@ -9,7 +9,7 @@ namespace rage
     class ptxDomain : datBase
     {
     public:
-        enum class eDomainType
+        enum class eDomainShape
         {
             BOX = 0,
             SPHERE,
@@ -19,12 +19,12 @@ namespace rage
         };
 
     public:
-        ptxDomain(uint32_t domainFunction, eDomainType domainType)
-            : field_4(), mType(domainType), mDomainFunction(domainFunction), field_B0(gMatrix34Identity), field_FC{0}, field_100(0.0f), field_104(0.0f), field_108(0.0f),
-            field_10C(0.0f), field_110(0.0f), field_114(-1.0f), mFileVersion(2.0f), field_11C(nullptr), field_120(0), mWorldSpace(false), mPointRelative(false), field_126{}
+        ptxDomain(uint32_t domainType, eDomainShape domainShape)
+            : field_4(), mShape(domainShape), mDomainType(domainType), field_B0(gMatrix34Identity), field_FC{0}, field_100(0.0f), field_104(0.0f), field_108(0.0f),
+            field_10C(0.0f), field_110(0.0f), field_114(-1.0f), mFileVersion(2.0f), mKeyframePropList(nullptr), field_120(0), mWorldSpace(false), mPointRelative(false), field_126{}
         {}
 
-        ptxDomain(const datResource& rsc) : mPositionKF(rsc), mDirectionKF(rsc), mSizeKF(rsc), mInnerSize(rsc), field_11C(rsc), field_120(0)
+        ptxDomain(const datResource& rsc) : mPositionKF(rsc), mRotationKF(rsc), mSizeOuterKF(rsc), mSizeInnerKF(rsc), mKeyframePropList(rsc), field_120(0)
         {}
 
         void AddToLayout(RSC5Layout& layout, uint32_t depth);
@@ -32,21 +32,20 @@ namespace rage
 
         void Place(void* that, const datResource& rsc);
 
-        static const char* TypeToString(eDomainType type);
-        static eDomainType StringToType(const char* str);
+        static const char* ShapeToString(eDomainShape shape);
+        static eDomainShape StringToShape(const char* str);
         uint32_t GetObjectSize() const;
 
         virtual void WriteToJson(rapidjson::PrettyWriter<rapidjson::StringBuffer>& writer) = 0;
         virtual void LoadFromJson(rapidjson::GenericObject<true, rapidjson::Value>& object) = 0;
 
         float field_4;
-        eDomainType mType;
-        //emitter and velocity?
-        int32_t mDomainFunction;
+        eDomainShape mShape;
+        int32_t mDomainType;
         rmPtfxKeyframe mPositionKF;
-        rmPtfxKeyframe mDirectionKF;
-        rmPtfxKeyframe mSizeKF;
-        rmPtfxKeyframe mInnerSize;
+        rmPtfxKeyframe mRotationKF;
+        rmPtfxKeyframe mSizeOuterKF;
+        rmPtfxKeyframe mSizeInnerKF;
         Matrix34 field_B0;
         Vector3 field_F0;
         int8_t field_FC[4];
@@ -58,7 +57,7 @@ namespace rage
         float field_114;
         float mFileVersion;
         //unknown type - always null
-        datOwner<void*> field_11C;
+        datOwner<void*> mKeyframePropList;
         int32_t field_120;
         bool mWorldSpace;
         bool mPointRelative;
@@ -73,7 +72,7 @@ namespace rage
     class ptxDomainBox : public ptxDomain
     {
     public:
-        ptxDomainBox(uint32_t domainFunction) : ptxDomain(domainFunction, eDomainType::BOX), field_130(0.0f), field_134(0.0f), field_138(0.0f), field_13C(0.0f),
+        ptxDomainBox(uint32_t domainFunction) : ptxDomain(domainFunction, eDomainShape::BOX), field_130(0.0f), field_134(0.0f), field_138(0.0f), field_13C(0.0f),
             field_140(0.0f), field_144(0.0f), field_148(0.0f), field_14C(0.0f), field_150(0.0f), field_154(0.0f), field_158(0.0f), field_15C(0.0f)
         {}
 
@@ -102,7 +101,7 @@ namespace rage
     class ptxDomainSphere : public ptxDomain
     {
     public:
-        ptxDomainSphere(uint32_t domainFunction) : ptxDomain(domainFunction, eDomainType::SPHERE), field_130(0.0f), field_134(0.0f), field_138(0.0f), field_13C(0.0f)
+        ptxDomainSphere(uint32_t domainFunction) : ptxDomain(domainFunction, eDomainShape::SPHERE), field_130(0.0f), field_134(0.0f), field_138(0.0f), field_13C(0.0f)
         {}
 
         ptxDomainSphere(const datResource& rsc) : ptxDomain(rsc)
@@ -122,7 +121,7 @@ namespace rage
     class ptxDomainCylinder : public ptxDomain
     {
     public:
-        ptxDomainCylinder(uint32_t domainFunction) : ptxDomain(domainFunction, eDomainType::CYLINDER), field_130(0.0f), field_134(0.0f), field_138(0.0f), field_13C(0.0f),
+        ptxDomainCylinder(uint32_t domainFunction) : ptxDomain(domainFunction, eDomainShape::CYLINDER), field_130(0.0f), field_134(0.0f), field_138(0.0f), field_13C(0.0f),
             field_140(0.0f), field_144(0.0f), field_148(0.0f), field_14C(0.0f), field_150(0.0f), field_154(0.0f), field_158(0.0f), field_15C(0.0f) 
         {}
 
@@ -151,7 +150,7 @@ namespace rage
     class ptxDomainVortex : public ptxDomain
     {
     public:
-        ptxDomainVortex(uint32_t domainFunction) : ptxDomain(domainFunction, eDomainType::VORTEX), field_130(0.0f), field_134(0.0f), field_138(0.0f), field_13C(0.0f)
+        ptxDomainVortex(uint32_t domainFunction) : ptxDomain(domainFunction, eDomainShape::VORTEX), field_130(0.0f), field_134(0.0f), field_138(0.0f), field_13C(0.0f)
         {}
 
         ptxDomainVortex(const datResource& rsc) : ptxDomain(rsc) 

@@ -387,8 +387,8 @@ namespace rage
                                 if(events[i]->mType == ptxEvent::eEventType::EMITTER)
                                 {
                                     ptxEventEmitter& emitter = (ptxEventEmitter&)*events[i];
-                                    emitter.mEmitRule = mEmitRules->Find(rage::atStringHash(emitter.mEmmiterRuleName));
-                                    emitter.mRule = mRules->Find(rage::atStringHash(emitter.mPtxRuleName));
+                                    emitter.mEmitterRule = mEmitRules->Find(rage::atStringHash(emitter.mEmitterRuleName));
+                                    emitter.mParticleRule = mRules->Find(rage::atStringHash(emitter.mParticleRuleName));
                                 }
                                 else if(events[i]->mType == ptxEvent::eEventType::EFFECT)
                                 {

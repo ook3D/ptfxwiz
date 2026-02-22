@@ -30,7 +30,7 @@ namespace rage
         {
             for(uint16_t i = 0; i < mEvoBlendModeList.GetCount(); i++)
             {
-                delete[] mEvoBlendModeList[i].field_0;
+                delete[] mEvoBlendModeList[i].mData;
             }
         }
     }
@@ -65,11 +65,11 @@ namespace rage
                     ptxEvoBlendMode& blendMode = mEvoBlendModeList[i];
                     writer.StartObject();
                     {
-                        writer.String("field_0");
+                        writer.String("Data");
                         writer.StartArray();
                         for(size_t j = 0; j < EVO_BLEND_MODE_COUNT; j++)
                         {
-                            writer.Uint(blendMode.field_0[j]);
+                            writer.Uint(blendMode.mData[j]);
                         }
                         writer.EndArray();
 
@@ -113,18 +113,18 @@ namespace rage
             for(auto& evoBlendModeValue : evoBlendModeArray)
             {
                 mEvoBlendModeList.Append();
-                mEvoBlendModeList.Back().field_0 = {new uint8_t[EVO_BLEND_MODE_COUNT]};
+                mEvoBlendModeList.Back().mData = {new uint8_t[EVO_BLEND_MODE_COUNT]};
                 mEvoBlendModeList.Back().field_4 = EVO_BLEND_MODE_COUNT;
                 mEvoBlendModeList.Back().field_8 = EVO_BLEND_MODE_COUNT;
-                memset(mEvoBlendModeList.Back().field_0, EVO_BLEND_MODE_COUNT, 0);
+                memset(mEvoBlendModeList.Back().mData, EVO_BLEND_MODE_COUNT, 0);
 
-                auto field_0_array = evoBlendModeValue["field_0"].GetArray();
+                auto dataArray = evoBlendModeValue["Data"].GetArray();
                 uint32_t index = 0;
-                for(auto& field_0_value : field_0_array)
+                for(auto& dataValue : dataArray)
                 {
-                    mEvoBlendModeList.Back().field_0[index++] = field_0_value.GetUint();
+                    mEvoBlendModeList.Back().mData[index++] = dataValue.GetUint();
                 }
-                //*mEvoBlendModeList.Back().field_0 = evoListValue.GetObject()["field_0"].GetInt();
+                //*mEvoBlendModeList.Back().mData = evoListValue.GetObject()["field_0"].GetInt();
                 //mEvoBlendModeList.Back().field_4 = evoListValue.GetObject()["field_4"].GetInt();
             }
         }
@@ -325,8 +325,8 @@ namespace rage
             writer.String("KeyFrames");
             mKeyFrames.WriteToJson(writer);
 
-            writer.String("RegID");
-            writer.Int(mRegID);
+            writer.String("EvolutionIdx");
+            writer.Int(mEvolutionIdx);
         }
         writer.EndObject();
     }
@@ -334,6 +334,6 @@ namespace rage
     void ptxEvoProp::LoadFromJson(rapidjson::GenericObject<true, rapidjson::Value>& object)
     {
         JsonHelpers::LoadMemberObject(mKeyFrames, object, "KeyFrames");
-        mRegID = object["RegID"].GetInt();
+        mEvolutionIdx = object["EvolutionIdx"].GetInt();
     }
 }

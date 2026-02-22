@@ -12,9 +12,9 @@ namespace rage
     class PtxList
     {
     public:
-        PtxList() : mTextures(nullptr), mDrawables(nullptr), mRules(nullptr), mEmitRules(nullptr), mEffectRules(nullptr), field_4{0, 0, 0, 0}, field_10(0) {}
+        PtxList() : mTextures(nullptr), mDrawables(nullptr), mRules(nullptr), mEmitRules(nullptr), mEffectRules(nullptr), mTextureDictPusher{0, 0, 0, 0}, mTextureDictPopper(0) {}
         
-        PtxList(const datResource& rsc) : field_4{0, 0, 0, 0}, field_10(0)
+        PtxList(const datResource& rsc) : mTextureDictPusher{0, 0, 0, 0}, mTextureDictPopper(0)
         {
             mTextures.Place(&mTextures, rsc);
             mDrawables.Place(&mDrawables, rsc);
@@ -90,10 +90,10 @@ namespace rage
         }
         
         datOwner<pgDictionary<grcTexturePC>> mTextures;
-        int8_t field_4[4];
+        int8_t mTextureDictPusher[4];
         datOwner<pgDictionary<rmcDrawable>> mDrawables;
         datOwner<pgDictionary<ptxRule>> mRules;
-        int32_t field_10;
+        int32_t mTextureDictPopper;
         datOwner<pgDictionary<ptxEmitRule>> mEmitRules;
         datOwner<pgDictionary<ptxEffectRule>> mEffectRules;
 

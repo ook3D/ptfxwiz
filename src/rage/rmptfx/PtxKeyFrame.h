@@ -100,11 +100,11 @@ namespace rage
                     writer.EndArray();
                 }
 
-                writer.String("field_20");
-                writer.Int(field_20);
+                writer.String("Widget");
+                writer.Int(mWidget);
 
-                writer.String("field_24");
-                writer.Int(field_24);
+                writer.String("Defn");
+                writer.Int(mDefn);
             }
             writer.EndObject();
         }
@@ -137,14 +137,14 @@ namespace rage
                 }
             }
 
-            field_20 = object["field_20"].GetUint();
-            field_24 = object["field_24"].GetUint();
+            mWidget = object["Widget"].GetUint();
+            mDefn = object["Defn"].GetUint();
         }
 
         int8_t field_15;
         atArray<ptxKeyFrameEntry> mEntries;
-        int32_t field_20;
-        int32_t field_24;
+        int32_t mWidget;
+        int32_t mDefn;
     };
     ASSERT_SIZE(rmPtfxKeyframe, 0x28);
 }

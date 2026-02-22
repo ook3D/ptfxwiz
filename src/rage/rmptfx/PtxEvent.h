@@ -21,7 +21,7 @@ namespace rage
         };
 
     public:
-        ptxEvent(eEventType type) : field_4(0), mTriggerTime(0.0f), mEvoGroup(nullptr), field_10(0.0f), mType(type), mTriggerCap(-1), field_1C(-1)
+        ptxEvent(eEventType type) : mIndex(0), mStartRatio(0.0f), mEvoGroup(nullptr), mEndRatio(0.0f), mType(type), mTriggerCap(-1), field_1C(-1)
         {}
 
         ptxEvent(const datResource& rsc) : mEvoGroup(rsc) {}
@@ -40,10 +40,10 @@ namespace rage
         virtual void WriteToJson(rapidjson::PrettyWriter<rapidjson::StringBuffer>& writer) = 0;
         virtual void LoadFromJson(rapidjson::GenericObject<true, rapidjson::Value>& object) = 0;
 
-        int32_t field_4;
-        float mTriggerTime;
+        int32_t mIndex;
+        float mStartRatio;
         datOwner<ptxEvolutionGroup> mEvoGroup;
-        float field_10;
+        float mEndRatio;
         eEventType mType;
         int32_t mTriggerCap;
         int32_t field_1C;
@@ -122,8 +122,8 @@ namespace rage
     class ptxEventEmitter : public ptxEvent
     {
     public:
-        ptxEventEmitter() : ptxEvent(eEventType::EMITTER), mDurationScalarMin(1.0f), mDurationScalarMax(1.0f), mTimeScalarMin(1.0f), mTimeScalarMax(1.0f),
-                            mZoomMin(1.0f), mZoomMax(1.0f), mEmmiterRuleName(nullptr), mPtxRuleName(nullptr), mEmitRule(nullptr), mRule(nullptr)
+        ptxEventEmitter() : ptxEvent(eEventType::EMITTER), mPlaybackRateScalarMin(1.0f), mPlaybackRateScalarMax(1.0f), mTimeScalarMin(1.0f), mTimeScalarMax(1.0f),
+                            mZoomScalarMin(1.0f), mZoomScalarMax(1.0f), mEmitterRuleName(nullptr), mParticleRuleName(nullptr), mEmitterRule(nullptr), mParticleRule(nullptr)
         {
             mColorTintMin.Color = 0xFFFFFFFF;
             mColorTintMax.Color = 0xFFFFFFFF;
@@ -133,16 +133,16 @@ namespace rage
 
         ~ptxEventEmitter()
         {
-            if(mEmmiterRuleName)
+            if(mEmitterRuleName)
             {
-                delete[] mEmmiterRuleName;
-                mEmmiterRuleName = nullptr;
+                delete[] mEmitterRuleName;
+                mEmitterRuleName = nullptr;
             }
 
-            if(mPtxRuleName)
+            if(mParticleRuleName)
             {
-                delete[] mPtxRuleName;
-                mPtxRuleName = nullptr;
+                delete[] mParticleRuleName;
+                mParticleRuleName = nullptr;
             }
         }
 
@@ -152,18 +152,18 @@ namespace rage
         void WriteToJson(rapidjson::PrettyWriter<rapidjson::StringBuffer>& writer) override;
         void LoadFromJson(rapidjson::GenericObject<true, rapidjson::Value>& object) override;
 
-        float mDurationScalarMin;
-        float mDurationScalarMax;
+        float mPlaybackRateScalarMin;
+        float mPlaybackRateScalarMax;
         float mTimeScalarMin;
         float mTimeScalarMax;
-        float mZoomMin;
-        float mZoomMax;
+        float mZoomScalarMin;
+        float mZoomScalarMax;
         Color32 mColorTintMin;
         Color32 mColorTintMax;
-        char* mEmmiterRuleName;
-        char* mPtxRuleName;
-        datRef<class ptxEmitRuleStd> mEmitRule;
-        datRef<class ptxRule> mRule;
+        char* mEmitterRuleName;
+        char* mParticleRuleName;
+        datRef<class ptxEmitRuleStd> mEmitterRule;
+        datRef<class ptxRule> mParticleRule;
     };
     ASSERT_SIZE(ptxEventEmitter, 0x50);
 };

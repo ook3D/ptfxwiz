@@ -7,97 +7,97 @@ namespace rage
     void ptxDomain::AddToLayout(RSC5Layout& layout, uint32_t depth)
     {
         mPositionKF.AddToLayout(layout, depth);
-        mDirectionKF.AddToLayout(layout, depth);
-        mSizeKF.AddToLayout(layout, depth);
-        mInnerSize.AddToLayout(layout, depth);
+        mRotationKF.AddToLayout(layout, depth);
+        mSizeOuterKF.AddToLayout(layout, depth);
+        mSizeInnerKF.AddToLayout(layout, depth);
 
-        field_11C.AddToLayout(layout, depth);
+        mKeyframePropList.AddToLayout(layout, depth);
     }
 
     void ptxDomain::SerializePtrs(RSC5Layout& layout, datResource& rsc, uint32_t depth)
     {
         mPositionKF.SerializePtrs(layout, rsc,  depth);
-        mDirectionKF.SerializePtrs(layout, rsc,  depth);
-        mSizeKF.SerializePtrs(layout, rsc,  depth);
-        mInnerSize.SerializePtrs(layout, rsc,  depth);
+        mRotationKF.SerializePtrs(layout, rsc,  depth);
+        mSizeOuterKF.SerializePtrs(layout, rsc,  depth);
+        mSizeInnerKF.SerializePtrs(layout, rsc,  depth);
 
-        field_11C.SerializePtrs(layout, rsc,  depth);
+        mKeyframePropList.SerializePtrs(layout, rsc,  depth);
     }
 
     void ptxDomain::Place(void* that, const datResource& rsc)
     {
-        switch(mType)
+        switch(mShape)
         {
-            case eDomainType::BOX:
+            case eDomainShape::BOX:
                 new(that) ptxDomainBox(rsc);
             break;
 
-            case eDomainType::SPHERE:
+            case eDomainShape::SPHERE:
                 new(that) ptxDomainSphere(rsc);
             break;
 
-            case eDomainType::CYLINDER:
+            case eDomainShape::CYLINDER:
                 new(that) ptxDomainCylinder(rsc);
             break;
 
-            case eDomainType::VORTEX:
+            case eDomainShape::VORTEX:
                 new(that) ptxDomainVortex(rsc);
             break;
 
             default:
-                Log::Error("Invalid ptx domain type - %d", mType);
+                Log::Error("Invalid ptx domain shape - %d", mShape);
         }
     }
 
     uint32_t ptxDomain::GetObjectSize() const
     {
-        switch(mType)
+        switch(mShape)
         {
-            case eDomainType::BOX:
+            case eDomainShape::BOX:
             return sizeof(ptxDomainBox);
             break;
 
-            case eDomainType::SPHERE:
+            case eDomainShape::SPHERE:
             return sizeof(ptxDomainSphere);
             break;
 
-            case eDomainType::CYLINDER:
+            case eDomainShape::CYLINDER:
             return sizeof(ptxDomainCylinder);
             break;
 
-            case eDomainType::VORTEX:
+            case eDomainShape::VORTEX:
             return sizeof(ptxDomainVortex);
             break;
 
             default:
-            Log::Error("Invalid ptx domain type - %d", mType);
+            Log::Error("Invalid ptx domain shape - %d", mShape);
         }
     }
 
-    const char* ptxDomain::TypeToString(eDomainType type)
+    const char* ptxDomain::ShapeToString(eDomainShape shape)
     {
         static const char* lut[] {"BOX", "SPHERE", "CYLINDER", "VORTEX", "COUNT"};
 
-        if((uint32_t)type >= (uint32_t)eDomainType::COUNT)
-            return "INVALID_TYPE";
+        if((uint32_t)shape >= (uint32_t)eDomainShape::COUNT)
+            return "INVALID_SHAPE";
         else
-            return lut[(uint32_t)type];
+            return lut[(uint32_t)shape];
     }
 
-    ptxDomain::eDomainType ptxDomain::StringToType(const char* str)
+    ptxDomain::eDomainShape ptxDomain::StringToShape(const char* str)
     {
         static const char* lut[] {"BOX", "SPHERE", "CYLINDER", "VORTEX", "COUNT"};
 
         if(!str)
-            return eDomainType::COUNT;
+            return eDomainShape::COUNT;
 
         for(size_t i = 0; i < std::size(lut); i++)
         {
             if(stricmp(str, lut[i]) == 0)
-                return (eDomainType)i;
+                return (eDomainShape)i;
         }
 
-        return eDomainType::COUNT;
+        return eDomainShape::COUNT;
     }
 
     void ptxDomain::WriteToJsonBase(rapidjson::PrettyWriter<rapidjson::StringBuffer>& writer)
@@ -105,20 +105,20 @@ namespace rage
         writer.String("field_4");
         writer.Double((double)field_4);
 
-        writer.String("Type");
-        writer.String(TypeToString(mType));
+        writer.String("Shape");
+        writer.String(ShapeToString(mShape));
 
-        writer.String("DomainFunction");
-        writer.Int(mDomainFunction);
+        writer.String("DomainType");
+        writer.Int(mDomainType);
 
         writer.String("PositionKF");
         mPositionKF.WriteToJson(writer);
-        writer.String("DirectionKF");
-        mDirectionKF.WriteToJson(writer);
-        writer.String("SizeKF");
-        mSizeKF.WriteToJson(writer);
-        writer.String("InnerSize");
-        mInnerSize.WriteToJson(writer);
+        writer.String("RotationKF");
+        mRotationKF.WriteToJson(writer);
+        writer.String("SizeOuterKF");
+        mSizeOuterKF.WriteToJson(writer);
+        writer.String("SizeInnerKF");
+        mSizeInnerKF.WriteToJson(writer);
 
         writer.String("field_B0");
         writer.StartArray();
@@ -188,9 +188,9 @@ namespace rage
         field_4 = object["field_4"].GetFloat();
 
         JsonHelpers::LoadMemberObject(mPositionKF, object, "PositionKF");
-        JsonHelpers::LoadMemberObject(mDirectionKF, object, "DirectionKF");
-        JsonHelpers::LoadMemberObject(mSizeKF, object, "SizeKF");
-        JsonHelpers::LoadMemberObject(mInnerSize, object, "InnerSize");
+        JsonHelpers::LoadMemberObject(mRotationKF, object, "RotationKF");
+        JsonHelpers::LoadMemberObject(mSizeOuterKF, object, "SizeOuterKF");
+        JsonHelpers::LoadMemberObject(mSizeInnerKF, object, "SizeInnerKF");
 
         auto field_B0_Array = object["field_B0"].GetArray();
         auto field_B0_Row1 = field_B0_Array[0].GetArray();

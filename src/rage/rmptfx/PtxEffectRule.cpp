@@ -66,8 +66,8 @@ namespace rage
         writer.String("KFDataCapsuleA");
         mKFDataCapsuleA.WriteToJson(writer);
 
-        writer.String("field_FC");
-        writer.Int(field_FC);
+        writer.String("NumLoops");
+        writer.Int(mNumLoops);
 
         if(mPtxEvoGroup.Get())
         {
@@ -75,27 +75,27 @@ namespace rage
             mPtxEvoGroup->WriteToJson(writer);
         }
 
-        writer.String("field_104");
-        writer.Double((double)field_104);
+        writer.String("ZoomLevel");
+        writer.Double((double)mZoomLevel);
 
-        writer.String("ZoomCullDistance");
-        writer.Int(mZoomCullDistance);
+        writer.String("ColourTintMaxEnable");
+        writer.Int(mColourTintMaxEnable);
 
         writer.String("UseRandomColor");
         writer.Bool(mUseRandomColor);
         writer.String("UseDefaultFunctors");
         writer.Bool(mUseDefaultFunctors);
-        writer.String("HasDataSphere");
-        writer.Bool(mHasDataSphere);
+        writer.String("UseDataVolume");
+        writer.Bool(mUseDataVolume);
 
-        writer.String("DataObjectType");
-        writer.Int(mDataObjectType);
+        writer.String("DataVolumeType");
+        writer.Int(mDataVolumeType);
 
         writer.String("GameFlags");
         writer.Uint(mGameFlags);
 
-        writer.String("field_114");
-        writer.Int(field_114);
+        writer.String("NumActiveInstances");
+        writer.Int(mNumActiveInstances);
         writer.String("field_11F");
         writer.Int(field_11F);
     }
@@ -114,7 +114,7 @@ namespace rage
         JsonHelpers::LoadMemberObject(mKFDataSphere, object, "KFDataSphere");
         JsonHelpers::LoadMemberObject(mKFDataCapsuleA, object, "KFDataCapsuleA");
 
-        field_FC = object["field_FC"].GetInt();
+        mNumLoops = object["NumLoops"].GetInt();
 
         if(object.HasMember("PtxEvoGroup") && object["PtxEvoGroup"].IsObject())
         {
@@ -123,19 +123,19 @@ namespace rage
             mPtxEvoGroup->LoadFromJson(evoGroupObject);
         }
 
-        field_104 = object["field_104"].GetFloat();
+        mZoomLevel = object["ZoomLevel"].GetFloat();
 
-        mZoomCullDistance = object["ZoomCullDistance"].GetInt();
+        mColourTintMaxEnable = object["ColourTintMaxEnable"].GetInt();
 
         mUseRandomColor = object["UseRandomColor"].GetBool();
         mUseDefaultFunctors = object["UseDefaultFunctors"].GetBool();
-        mHasDataSphere = object["HasDataSphere"].GetBool();
+        mUseDataVolume = object["UseDataVolume"].GetBool();
 
-        mDataObjectType = object["DataObjectType"].GetInt();
+        mDataVolumeType = object["DataVolumeType"].GetInt();
 
         mGameFlags = object["GameFlags"].GetUint();
 
-        field_114 = object["field_114"].GetInt();
+        mNumActiveInstances = object["NumActiveInstances"].GetInt();
         field_11F = object["field_11F"].GetInt();
     }
 
@@ -159,29 +159,29 @@ namespace rage
             writer.String("Timeline");
             mTimeline.WriteToJson(writer);
 
-            writer.String("FadeDistance");
-            writer.Double((double)mFadeDistance);
-            writer.String("CullRadius");
-            writer.Double((double)mCullRadius);
-            writer.String("CullDistance");
-            writer.Double((double)mCullDistance);
-            writer.String("LodNearDistance");
-            writer.Double((double)mLodNearDistance);
-            writer.String("LodFarDistance");
-            writer.Double((double)mLodFarDistance);
+            writer.String("DistanceCullingFadeDist");
+            writer.Double((double)mDistanceCullingFadeDist);
+            writer.String("ViewportCullingSphereRadius");
+            writer.Double((double)mViewportCullingSphereRadius);
+            writer.String("DistanceCullingCullDist");
+            writer.Double((double)mDistanceCullingCullDist);
+            writer.String("LodEvoDistMin");
+            writer.Double((double)mLodEvoDistMin);
+            writer.String("LodEvoDistMax");
+            writer.Double((double)mLodEvoDistMax);
             writer.String("DurationMin");
             writer.Double((double)mDurationMin);
             writer.String("DurationMax");
             writer.Double((double)mDurationMax);
-            writer.String("TimeScalarMin");
-            writer.Double((double)mTimeScalarMin);
-            writer.String("TimeScalarMax");
-            writer.Double((double)mTimeScalarMax);
+            writer.String("PlaybackRateScalarMin");
+            writer.Double((double)mPlaybackRateScalarMin);
+            writer.String("PlaybackRateScalarMax");
+            writer.Double((double)mPlaybackRateScalarMax);
 
-            writer.String("field_16C");
-            writer.Int(field_16C);
-            writer.String("field_170");
-            writer.Int(field_170);
+            writer.String("PreUpdateTime");
+            writer.Int(mPreUpdateTime);
+            writer.String("PreUpdateTimeInterval");
+            writer.Int(mPreUpdateTimeInterval);
 
             writer.String("UseCullSphere");
             writer.Bool(mUseCullSphere);
@@ -191,18 +191,18 @@ namespace rage
             writer.Bool(mCullNoEmit);
             writer.String("CullNoDraw");
             writer.Bool(mCullNoDraw);
-            writer.String("SortEvents");
-            writer.Bool(mSortEvents);
+            writer.String("SortEventsByDistance");
+            writer.Bool(mSortEventsByDistance);
 
-            writer.String("Quality");
-            writer.Int(mQuality);
+            writer.String("DrawListId");
+            writer.Int(mDrawListId);
 
             writer.String("CullSphere");
             writer.Double((double)mCullSphere);
-            writer.String("field_184");
-            writer.Double((double)field_184);
-            writer.String("field_188");
-            writer.Double((double)field_188);
+            writer.String("ColnRange");
+            writer.Double((double)mColnRange);
+            writer.String("ColnProbeDist");
+            writer.Double((double)mColnProbeDist);
 
             writer.SetFormatOptions(rapidjson::kFormatSingleLineArray);
             writer.String("RandomOffsetPos");
@@ -227,30 +227,30 @@ namespace rage
 
         JsonHelpers::LoadMemberObject(mTimeline, object, "Timeline");
 
-        mFadeDistance = object["FadeDistance"].GetFloat();
-        mCullRadius = object["CullRadius"].GetFloat();
-        mCullDistance = object["CullDistance"].GetFloat();
-        mLodNearDistance = object["LodNearDistance"].GetFloat();
-        mLodFarDistance = object["LodFarDistance"].GetFloat();
+        mDistanceCullingFadeDist = object["DistanceCullingFadeDist"].GetFloat();
+        mViewportCullingSphereRadius = object["ViewportCullingSphereRadius"].GetFloat();
+        mDistanceCullingCullDist = object["DistanceCullingCullDist"].GetFloat();
+        mLodEvoDistMin = object["LodEvoDistMin"].GetFloat();
+        mLodEvoDistMax = object["LodEvoDistMax"].GetFloat();
         mDurationMin = object["DurationMin"].GetFloat();
         mDurationMax = object["DurationMax"].GetFloat();
-        mTimeScalarMin = object["TimeScalarMin"].GetFloat();
-        mTimeScalarMax = object["TimeScalarMax"].GetFloat();
+        mPlaybackRateScalarMin = object["PlaybackRateScalarMin"].GetFloat();
+        mPlaybackRateScalarMax = object["PlaybackRateScalarMax"].GetFloat();
 
-        field_16C = object["field_16C"].GetInt();
-        field_170 = object["field_170"].GetInt();
+        mPreUpdateTime = object["PreUpdateTime"].GetInt();
+        mPreUpdateTimeInterval = object["PreUpdateTimeInterval"].GetInt();
 
         mUseCullSphere = object["UseCullSphere"].GetBool();
         mCullNoUpdate = object["CullNoUpdate"].GetBool();
         mCullNoEmit = object["CullNoEmit"].GetBool();
         mCullNoDraw = object["CullNoDraw"].GetBool();
-        mSortEvents = object["SortEvents"].GetBool();
+        mSortEventsByDistance = object["SortEventsByDistance"].GetBool();
 
-        mQuality = object["Quality"].GetInt();
+        mDrawListId = object["DrawListId"].GetInt();
 
         mCullSphere = object["CullSphere"].GetFloat();
-        field_184 = object["field_184"].GetFloat();
-        field_188 = object["field_188"].GetFloat();
+        mColnRange = object["ColnRange"].GetFloat();
+        mColnProbeDist = object["ColnProbeDist"].GetFloat();
 
         mRandomOffsetPos.x = object["RandomOffsetPos"].GetArray()[0].GetFloat();;
         mRandomOffsetPos.y = object["RandomOffsetPos"].GetArray()[1].GetFloat();;

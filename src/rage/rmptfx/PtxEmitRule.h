@@ -13,7 +13,7 @@ namespace rage
         class stdEmitterData
         {
         public:
-            stdEmitterData() : mEmitterDomain(nullptr), mVelocityDomain(nullptr), field_8{0}, field_10{0}, mPtxRuleName(nullptr) 
+            stdEmitterData() : mEmitterDomain(nullptr), mVelocityDomain(nullptr), mEmitterNewDomainShape{0}, mVelocityNewDomainShape{0}, mPtxRuleName(nullptr) 
             {}
 
             stdEmitterData(const datResource& rsc) : mEmitterDomain(rsc), mVelocityDomain(rsc), mSpawnRateKF(rsc), mSpawnDistKF(rsc), 
@@ -43,9 +43,9 @@ namespace rage
             void LoadFromJson(rapidjson::GenericObject<true, rapidjson::Value>& object);
 
             datOwner<ptxDomain> mEmitterDomain;
-            int8_t field_8[4];
+            int8_t mEmitterNewDomainShape[4];
             datOwner<ptxDomain> mVelocityDomain;
-            int8_t field_10[4];
+            int8_t mVelocityNewDomainShape[4];
             rmPtfxKeyframe mSpawnRateKF;
             rmPtfxKeyframe mSpawnDistKF;
             rmPtfxKeyframe mTimeScaleKF;
@@ -59,17 +59,17 @@ namespace rage
             //unused
             char* mPtxRuleName;
         private:
-            ptxDomain* CreateDomain(uint32_t domainFunction, ptxDomain::eDomainType type);
+            ptxDomain* CreateDomain(uint32_t domainType, ptxDomain::eDomainShape shape);
         };
         ASSERT_SIZE(stdEmitterData, 0x1A8);
 
     public:
-        ptxEmitRuleStd() : mDuration(1.0f), field_C(1), mEmitterData(), mKeyFrames{0}, mName(nullptr), mFileVersion(4.0f), field_1E8(0), mOneShot(false), field_1EC{0} {}
+        ptxEmitRuleStd() : mDuration(1.0f), field_C(1), mEmitterData(), mKeyFrames{0}, mName(nullptr), mFileVersion(4.0f), mLastEvoList(0), mOneShot(false), field_1EC{0} {}
 
         ptxEmitRuleStd(const datResource& rsc) : mEmitterData(rsc), mKeyFrames{rsc, rsc, rsc, rsc, rsc, rsc, rsc, rsc, rsc, rsc} 
         {
             rsc.PointerFixUp(mName);
-            field_1E8 = 0;
+            mLastEvoList = 0;
 
             assert(mFileVersion > 3.2f);
         }
@@ -101,7 +101,7 @@ namespace rage
         datRef<rmPtfxKeyframe> mKeyFrames[10];
         char* mName;
         float mFileVersion;
-        int32_t field_1E8;
+        int32_t mLastEvoList;
         bool mOneShot;
         int8_t field_1EC[3];
     };

@@ -45,8 +45,8 @@ namespace rage
             writer.String("EmitterData");
             mEmitterData.WriteToJson(writer);
 
-            writer.String("field_1E8");
-            writer.Int(field_1E8);
+            writer.String("mLastEvoList");
+            writer.Int(mLastEvoList);
 
             writer.String("OneShot");
             writer.Bool(mOneShot);
@@ -61,7 +61,7 @@ namespace rage
 
         JsonHelpers::LoadMemberObject(mEmitterData, object, "EmitterData");
 
-        field_1E8 = object["field_1E8"].GetInt();
+        mLastEvoList = object["mLastEvoList"].GetInt();
         mOneShot = object["OneShot"].GetBool();
     }
 
@@ -144,16 +144,16 @@ namespace rage
         if(object.HasMember("EmitterDomain") && object["EmitterDomain"].IsObject())
         {
             auto domainObject = object["EmitterDomain"].GetObject();
-            ptxDomain::eDomainType type = ptxDomain::StringToType(domainObject["Type"].GetString());
-            mEmitterDomain = CreateDomain(0, type);
+            ptxDomain::eDomainShape shape = ptxDomain::StringToShape(domainObject["Shape"].GetString());
+            mEmitterDomain = CreateDomain(0, shape);
             mEmitterDomain->LoadFromJson(domainObject);
         }
 
         if(object.HasMember("VelocityDomain") && object["VelocityDomain"].IsObject())
         {
             auto domainObject = object["VelocityDomain"].GetObject();
-            ptxDomain::eDomainType type = ptxDomain::StringToType(domainObject["Type"].GetString());
-            mVelocityDomain = CreateDomain(1, type);
+            ptxDomain::eDomainShape shape = ptxDomain::StringToShape(domainObject["Shape"].GetString());
+            mVelocityDomain = CreateDomain(1, shape);
             mVelocityDomain->LoadFromJson(domainObject);
         }
 
@@ -170,28 +170,28 @@ namespace rage
         JsonHelpers::LoadMemberObject(mInheritVelKFOT, object, "InheritVelKFOT");
     }
 
-    ptxDomain* ptxEmitRuleStd::stdEmitterData::CreateDomain(uint32_t domainFunction, ptxDomain::eDomainType type)
+    ptxDomain* ptxEmitRuleStd::stdEmitterData::CreateDomain(uint32_t domainType, ptxDomain::eDomainShape shape)
     {
-        switch(type)
+        switch(shape)
         {
-            case ptxDomain::eDomainType::BOX:
-                return new ptxDomainBox(domainFunction);
+            case ptxDomain::eDomainShape::BOX:
+                return new ptxDomainBox(domainType);
             break;
 
-            case ptxDomain::eDomainType::SPHERE:
-                return new ptxDomainSphere(domainFunction);
+            case ptxDomain::eDomainShape::SPHERE:
+                return new ptxDomainSphere(domainType);
             break;
 
-            case ptxDomain::eDomainType::CYLINDER:
-                return new ptxDomainCylinder(domainFunction);
+            case ptxDomain::eDomainShape::CYLINDER:
+                return new ptxDomainCylinder(domainType);
             break;
 
-            case ptxDomain::eDomainType::VORTEX:
-                return new ptxDomainVortex(domainFunction);
+            case ptxDomain::eDomainShape::VORTEX:
+                return new ptxDomainVortex(domainType);
             break;
 
             default:
-                Log::Error("Invalid ptx domain type - %d", type);
+                Log::Error("Invalid ptx domain shape - %d", shape);
                return nullptr;
         }
     }

@@ -103,11 +103,11 @@ namespace rage
         writer.String("Type");
         writer.String(TypeToString(mType));
 
-        writer.String("field_4");
-        writer.Int(field_4);
+        writer.String("Index");
+        writer.Int(mIndex);
 
-        writer.String("TriggerTime");
-        writer.Double((double)mTriggerTime);
+        writer.String("StartRatio");
+        writer.Double((double)mStartRatio);
 
         if(mEvoGroup.Get())
         {
@@ -115,8 +115,8 @@ namespace rage
             mEvoGroup->WriteToJson(writer);
         }
 
-        writer.String("field_10");
-        writer.Double((double)field_10);
+        writer.String("EndRatio");
+        writer.Double((double)mEndRatio);
 
         writer.String("TriggerCap");
         writer.Int(mTriggerCap);
@@ -127,8 +127,8 @@ namespace rage
 
     void ptxEvent::LoadFromJsonBase(rapidjson::GenericObject<true, rapidjson::Value>& object)
     {
-        field_4 = object["field_4"].GetInt();
-        mTriggerTime = object["TriggerTime"].GetFloat();
+        mIndex = object["Index"].GetInt();
+        mStartRatio = object["StartRatio"].GetFloat();
 
         if(object.HasMember("EvoGroup"))
         {
@@ -136,7 +136,7 @@ namespace rage
             JsonHelpers::LoadMemberObject(*mEvoGroup, object, "EvoGroup");
         }
 
-        field_10 = object["field_10"].GetFloat();
+        mEndRatio = object["EndRatio"].GetFloat();
         mTriggerCap = object["TriggerCap"].GetInt();
         field_1C = object["field_1C"].GetInt();
     }
@@ -277,23 +277,23 @@ namespace rage
         writer.EndObject();
     }
 
-    static ptxDomain* CreateDomain(uint32_t domainFunction, ptxDomain::eDomainType type)
+    static ptxDomain* CreateDomain(uint32_t domainFunction, ptxDomain::eDomainShape type)
     {
         switch(type)
         {
-            case ptxDomain::eDomainType::BOX:
+            case ptxDomain::eDomainShape::BOX:
                 return new ptxDomainBox(domainFunction);
             break;
 
-            case ptxDomain::eDomainType::SPHERE:
+            case ptxDomain::eDomainShape::SPHERE:
                 return new ptxDomainSphere(domainFunction);
             break;
 
-            case ptxDomain::eDomainType::CYLINDER:
+            case ptxDomain::eDomainShape::CYLINDER:
                 return new ptxDomainCylinder(domainFunction);
             break;
 
-            case ptxDomain::eDomainType::VORTEX:
+            case ptxDomain::eDomainShape::VORTEX:
                 return new ptxDomainVortex(domainFunction);
             break;
 
@@ -324,14 +324,14 @@ namespace rage
         if(object.HasMember("EmitterDomain") && object["EmitterDomain"].IsObject())
         {
             auto domainObj = object["EmitterDomain"].GetObject();
-            ptxDomain::eDomainType type = ptxDomain::StringToType(domainObj["Type"].GetString());
+            ptxDomain::eDomainShape shape = ptxDomain::StringToShape(domainObj["Shape"].GetString());
             
-            mEmitterDomain = { CreateDomain(0, type) };
+            mEmitterDomain = { CreateDomain(0, shape) };
             if(mEmitterDomain.Get())
                 mEmitterDomain->LoadFromJson(domainObj);
             else
             {
-                Log::Error("ptxEventEffect \"%s\"'s EmitterDomain uses an invalid domain type - %d", mEffectName ? mEffectName : "null", type);
+                Log::Error("ptxEventEffect \"%s\"'s EmitterDomain uses an invalid domain shape - %d", mEffectName ? mEffectName : "null", shape);
             }
         }
 
@@ -339,34 +339,34 @@ namespace rage
     }
 
 
-    ptxEventEmitter::ptxEventEmitter(const datResource& rsc) : ptxEvent(rsc), mEmitRule(rsc), mRule(rsc)
+    ptxEventEmitter::ptxEventEmitter(const datResource& rsc) : ptxEvent(rsc), mEmitterRule(rsc), mParticleRule(rsc)
     {
-        if(mEmmiterRuleName)
-            rsc.PointerFixUp(mEmmiterRuleName);
-        if(mPtxRuleName)
-            rsc.PointerFixUp(mPtxRuleName);
+        if(mEmitterRuleName)
+            rsc.PointerFixUp(mEmitterRuleName);
+        if(mParticleRuleName)
+            rsc.PointerFixUp(mParticleRuleName);
     }
 
     void ptxEventEmitter::AddToLayout(RSC5Layout& layout, uint32_t depth)
     {
-        mEmitRule.AddToLayout(layout, depth);
-        mRule.AddToLayout(layout, depth);
+        mEmitterRule.AddToLayout(layout, depth);
+        mParticleRule.AddToLayout(layout, depth);
 
-        if(mEmmiterRuleName)
-            layout.AddObject(mEmmiterRuleName, RSC5Layout::eBlockType::VIRTUAL, strlen(mEmmiterRuleName) + 1);
-        if(mPtxRuleName)
-            layout.AddObject(mPtxRuleName, RSC5Layout::eBlockType::VIRTUAL, strlen(mPtxRuleName) + 1);
+        if(mEmitterRuleName)
+            layout.AddObject(mEmitterRuleName, RSC5Layout::eBlockType::VIRTUAL, strlen(mEmitterRuleName) + 1);
+        if(mParticleRuleName)
+            layout.AddObject(mParticleRuleName, RSC5Layout::eBlockType::VIRTUAL, strlen(mParticleRuleName) + 1);
     }
 
     void ptxEventEmitter::SerializePtrs(RSC5Layout& layout, datResource& rsc, uint32_t depth)
     {
-        mEmitRule.SerializePtrs(layout, rsc, depth);
-        mRule.SerializePtrs(layout, rsc, depth);
+        mEmitterRule.SerializePtrs(layout, rsc, depth);
+        mParticleRule.SerializePtrs(layout, rsc, depth);
 
-        if(mEmmiterRuleName)
-            layout.SerializePtr(mEmmiterRuleName, strlen(mEmmiterRuleName) + 1);
-        if(mPtxRuleName)
-            layout.SerializePtr(mPtxRuleName, strlen(mPtxRuleName) + 1);
+        if(mEmitterRuleName)
+            layout.SerializePtr(mEmitterRuleName, strlen(mEmitterRuleName) + 1);
+        if(mParticleRuleName)
+            layout.SerializePtr(mParticleRuleName, strlen(mParticleRuleName) + 1);
     }
 
     void ptxEventEmitter::WriteToJson(rapidjson::PrettyWriter<rapidjson::StringBuffer>& writer)
@@ -375,29 +375,29 @@ namespace rage
         {
             WriteToJsonBase(writer);
 
-            if(mEmmiterRuleName)
+            if(mEmitterRuleName)
             {
-                writer.String("EmmiterRuleName");
-                writer.String(mEmmiterRuleName);
+                writer.String("EmitterRuleName");
+                writer.String(mEmitterRuleName);
             }
-            if(mPtxRuleName)
+            if(mParticleRuleName)
             {
-                writer.String("PtxRuleName");
-                writer.String(mPtxRuleName);
+                writer.String("ParticleRuleName");
+                writer.String(mParticleRuleName);
             }
 
-            writer.String("DurationScalarMin");
-            writer.Double((double)mDurationScalarMin);
-            writer.String("DurationScalarMax");
-            writer.Double((double)mDurationScalarMax);
+            writer.String("PlaybackRateScalarMin");
+            writer.Double((double)mPlaybackRateScalarMin);
+            writer.String("PlaybackRateScalarMax");
+            writer.Double((double)mPlaybackRateScalarMax);
             writer.String("TimeScalarMin");
             writer.Double((double)mTimeScalarMin);
             writer.String("TimeScalarMax");
             writer.Double((double)mTimeScalarMax);
-            writer.String("ZoomMin");
-            writer.Double((double)mZoomMin);
-            writer.String("ZoomMax");
-            writer.Double((double)mZoomMax);
+            writer.String("ZoomScalarMin");
+            writer.Double((double)mZoomScalarMin);
+            writer.String("ZoomScalarMax");
+            writer.Double((double)mZoomScalarMax);
 
             writer.SetFormatOptions(rapidjson::kFormatSingleLineArray);
             writer.String("ColorTintMin");
@@ -428,18 +428,18 @@ namespace rage
     {
         LoadFromJsonBase(object);
 
-        if(object.HasMember("EmmiterRuleName"))
-            mEmmiterRuleName = strdup(object["EmmiterRuleName"].GetString());
+        if(object.HasMember("EmitterRuleName"))
+            mEmitterRuleName = strdup(object["EmitterRuleName"].GetString());
 
-        if(object.HasMember("PtxRuleName"))
-            mPtxRuleName = strdup(object["PtxRuleName"].GetString());
+        if(object.HasMember("ParticleRuleName"))
+            mParticleRuleName = strdup(object["ParticleRuleName"].GetString());
 
-        mDurationScalarMin = object["DurationScalarMin"].GetFloat();
-        mDurationScalarMax = object["DurationScalarMax"].GetFloat();
+        mPlaybackRateScalarMin = object["PlaybackRateScalarMin"].GetFloat();
+        mPlaybackRateScalarMax = object["PlaybackRateScalarMax"].GetFloat();
         mTimeScalarMin = object["TimeScalarMin"].GetFloat();
         mTimeScalarMax = object["TimeScalarMax"].GetFloat();
-        mZoomMin = object["ZoomMin"].GetFloat();
-        mZoomMax = object["ZoomMax"].GetFloat();
+        mZoomScalarMin = object["ZoomScalarMin"].GetFloat();
+        mZoomScalarMax = object["ZoomScalarMax"].GetFloat();
 
         mColorTintMin.Red   = (uint8_t)object["ColorTintMin"].GetArray()[0].GetUint();
         mColorTintMin.Green = (uint8_t)object["ColorTintMin"].GetArray()[1].GetUint();

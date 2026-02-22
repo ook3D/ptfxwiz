@@ -11,8 +11,8 @@ namespace rage
     class ptxEffectRule : public atReferenceCounter
     {
     public:
-        ptxEffectRule() : mName(nullptr), field_FC(1), mPtxEvoGroup(nullptr), field_104(0.0f), field_108(nullptr), mZoomCullDistance(1), mUseRandomColor(false),
-                          mUseDefaultFunctors(false), field_10F{}, mHasDataSphere(false), mDataObjectType(0), mGameFlags(0), field_114(0), field_118{}, field_11F() {}
+        ptxEffectRule() : mName(nullptr), mNumLoops(1), mPtxEvoGroup(nullptr), mZoomLevel(0.0f), mPUIData(nullptr), mColourTintMaxEnable(1), mUseRandomColor(false),
+                          mUseDefaultFunctors(false), field_10F{}, mUseDataVolume(false), mDataVolumeType(0), mGameFlags(0), mNumActiveInstances(0), field_118{}, field_11F() {}
 
         ptxEffectRule(const datResource& rsc) : mKFColorTint(rsc), mKFColorTintMax(rsc), mKFZoom(rsc), mKFRotation(rsc), mKFDataSphere(rsc),
                                                 mKFDataCapsuleA(rsc), mPtxEvoGroup(rsc)
@@ -58,18 +58,18 @@ namespace rage
         rmPtfxKeyframe mKFDataSphere;
         rmPtfxKeyframe mKFDataCapsuleA;
         char* mName;
-        int32_t field_FC;
+        int32_t mNumLoops;
         datOwner<ptxEvolutionGroup> mPtxEvoGroup;
-        float field_104;
-        void* field_108;
-        int8_t mZoomCullDistance;
+        float mZoomLevel;
+        void* mPUIData;
+        int8_t mColourTintMaxEnable;
         bool mUseRandomColor;
         bool mUseDefaultFunctors;
         int8_t field_10F[2];
-        bool mHasDataSphere;
-        int8_t mDataObjectType;
+        bool mUseDataVolume;
+        int8_t mDataVolumeType;
         uint8_t mGameFlags;
-        int32_t field_114;
+        int32_t mNumActiveInstances;
         int8_t field_118[7];
         int8_t field_11F;
 
@@ -83,18 +83,18 @@ namespace rage
     class ptxEffectRuleStd : public ptxEffectRule
     {
     public:
-        ptxEffectRuleStd() : ptxEffectRule(), mFadeDistance(-1.0f), mCullRadius(0.0f), mCullDistance(-1.0f), mLodNearDistance(-1.0f), mLodFarDistance(-1.0f),
-                             mFileVersion(4.0f), mDurationMin(1.0f), mDurationMax(1.0f), mTimeScalarMin(1.0f), mTimeScalarMax(1.0f), field_16C(0), field_170(0),
-                             mUseCullSphere(false), mCullNoUpdate(false), mCullNoEmit(false), mCullNoDraw(true), mSortEvents(false), mQuality(0), field_17A{},
-                             mCullSphere(0.0f), field_184(0.0f), field_188(0.0f), field_18C{}, mRandomOffsetPos{.x = 0.0f, .y = 0.0f, .z = 0.0f}, field_19C{}, field_19F(0)
+        ptxEffectRuleStd() : ptxEffectRule(), mDistanceCullingFadeDist(-1.0f), mViewportCullingSphereRadius(0.0f), mDistanceCullingCullDist(-1.0f), mLodEvoDistMin(-1.0f), mLodEvoDistMax(-1.0f),
+                             mFileVersion(4.0f), mDurationMin(1.0f), mDurationMax(1.0f), mPlaybackRateScalarMin(1.0f), mPlaybackRateScalarMax(1.0f), mPreUpdateTime(0), mPreUpdateTimeInterval(0),
+                             mUseCullSphere(false), mCullNoUpdate(false), mCullNoEmit(false), mCullNoDraw(true), mSortEventsByDistance(false), mDrawListId(0), field_17A{},
+                             mCullSphere(0.0f), mColnRange(0.0f), mColnProbeDist(0.0f), field_18C{}, mRandomOffsetPos{.x = 0.0f, .y = 0.0f, .z = 0.0f}, field_19C{}, field_19F(0)
         {
             mTimeline.mEffectRule = {this};
         }
 
         ptxEffectRuleStd(const datResource& rsc) : ptxEffectRule(rsc), mTimeline(rsc)
         {
-            field_170 = 0;
-            mQuality = mQuality == 0 ? mQuality : 0;
+            mPreUpdateTimeInterval = 0;
+            mDrawListId = mDrawListId == 0 ? mDrawListId : 0;
         }
 
         void AddToLayout(RSC5Layout& layout, uint32_t depth);
@@ -104,28 +104,28 @@ namespace rage
         void LoadFromJson(rapidjson::GenericObject<true, rapidjson::Value>& object) override;
 
         ptxTimeLine mTimeline;
-        float mFadeDistance;
-        float mCullRadius;
-        float mCullDistance;
-        float mLodNearDistance;
-        float mLodFarDistance;
+        float mDistanceCullingFadeDist;
+        float mViewportCullingSphereRadius;
+        float mDistanceCullingCullDist;
+        float mLodEvoDistMin;
+        float mLodEvoDistMax;
         float mFileVersion;
         float mDurationMin;
         float mDurationMax;
-        float mTimeScalarMin;
-        float mTimeScalarMax;
-        int32_t field_16C;
-        int32_t field_170;
+        float mPlaybackRateScalarMin;
+        float mPlaybackRateScalarMax;
+        int32_t mPreUpdateTime;
+        int32_t mPreUpdateTimeInterval;
         bool mUseCullSphere;
         bool mCullNoUpdate;
         bool mCullNoEmit;
         bool mCullNoDraw;
-        bool mSortEvents;
-        int8_t mQuality;
+        bool mSortEventsByDistance;
+        int8_t mDrawListId;
         int8_t field_17A[4];
         float mCullSphere;
-        float field_184;
-        float field_188;
+        float mColnRange;
+        float mColnProbeDist;
         int8_t field_18C[4];
         Vector3 mRandomOffsetPos;
         int8_t field_19C[3];

@@ -34,7 +34,7 @@ namespace rage
             return 0x6A0;
         }
 
-        int32_t field_8;
+        int32_t mUIData;
         float mFileVersion;
         int32_t field_10;
         int8_t field_14[8];
@@ -67,18 +67,18 @@ namespace rage
     public:
         ptxSprite();
 
-        ptxSprite(const datResource& rsc) : ptxRule(rsc), field_184(rsc), mProps(rsc), mShader(rsc) {}
+        ptxSprite(const datResource& rsc) : ptxRule(rsc), mClipRegionData(rsc), mProps(rsc), mShader(rsc) {}
 
         void AddToLayout(RSC5Layout& layout, uint32_t depth)
         {
-            field_184.AddToLayout(layout, depth);
+            mClipRegionData.AddToLayout(layout, depth);
             mProps.AddToLayout(layout, depth);
             mShader.AddToLayout(layout, depth);
         }
 
         void SerializePtrs(RSC5Layout& layout, datResource& rsc, uint32_t depth)
         {
-            field_184.SerializePtrs(layout, rsc, depth);
+            mClipRegionData.SerializePtrs(layout, rsc, depth);
             mProps.SerializePtrs(layout, rsc, depth);
             mShader.SerializePtrs(layout, rsc, depth);
         }
@@ -86,26 +86,26 @@ namespace rage
         void WriteToJson(rapidjson::PrettyWriter<rapidjson::StringBuffer>& writer) override;
         void LoadFromJson(rapidjson::GenericObject<true, rapidjson::Value>& object) override;
 
-        float field_140;
-        float field_144;
-        float field_148;
-        int8_t field_14C;
-        float field_150;
-        float field_154;
-        float field_158;
-        int8_t field_15C;
-        Vector3 mAxisAlligned;
-        int8_t field_16C;
+        float mFlipChanceU;
+        float mFlipChanceV;
+        float mNearClipDist;
+        int8_t mIsScreenSpace;
+        float mFarClipDist;
+        float mProjectionDepth;
+        float mShadowCastIntensity;
+        int8_t mIsHiRes;
+        Vector3 mAlignAxis;
+        int8_t mAlignmentMode;
         int32_t mStartTexFrameIndex;
         int32_t mEndTexFrameIndex;
         int32_t mEndTexAnimFrame;
         int32_t mNumTextureTilesX;
         int32_t mNumTextureTilesY;
         //unknown type - always null
-        datOwner<void*> field_184;
+        datOwner<void*> mClipRegionData;
         ptxSpriteRulePropList mProps;
         rmPtfxShader mShader;
-        float mTrimCornersAmmount;
+        float mTrimCornersAmount;
         bool mTrimCorners;
         int8_t field_69D[2];
         int8_t field_69F;
@@ -146,7 +146,7 @@ namespace rage
         void* field_170;
         ptxModelRulePropList mProps;
         int8_t field_698[7];
-        int8_t field_69F;
+        int8_t mDisableDraw;
     };
     ASSERT_SIZE(ptxModel, 0x6A0);
 }

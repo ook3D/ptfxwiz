@@ -5,7 +5,7 @@
 
 namespace rage
 {
-    ptxRule::ptxRule(const char* className) : field_8(0), mFileVersion(4.3f), field_10(0), field_14{0, 0, 0, 0, 0, 0, 0, 0}, field_1C(0),
+    ptxRule::ptxRule(const char* className) : mUIData(0), mFileVersion(4.3f), field_10(0), field_14{0, 0, 0, 0, 0, 0, 0, 0}, field_1C(0),
                                               mSpawnEffectA(), mSpawnEffectB(), mRenderState(), mPhysicalRange(0.0f), mStopVelocity(0.0f), mFlags(0),
                                               field_120(0), mName(nullptr), mClassName{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
                                               mPercentPhysical(100), mPercentKill(0), field_134{0, 0, 0, 0, 0, 0, 0, 0, 0}
@@ -213,10 +213,10 @@ namespace rage
     }
 
 
-    ptxSprite::ptxSprite() : ptxRule("ptxsprite"), field_140(0.0f), field_144(0.0f), field_148(0.0f), field_14C(0), field_150(0.0f), field_154(0.0f),
-                             field_158(0.0f), field_15C(0), mAxisAlligned{.x = 0.0f, .y = 0.0f, .z = 0.0f}, field_16C(0), mStartTexFrameIndex(0), 
-                             mEndTexFrameIndex(0), mEndTexAnimFrame(-1), mNumTextureTilesX(1), mNumTextureTilesY(1), field_184(nullptr), mProps(),
-                             mShader(), mTrimCornersAmmount(0.0f), mTrimCorners(false), field_69D{0, 0}, field_69F(0)
+    ptxSprite::ptxSprite() : ptxRule("ptxsprite"), mFlipChanceU(0.0f), mFlipChanceV(0.0f), mNearClipDist(0.0f), mIsScreenSpace(0), mFarClipDist(0.0f), mProjectionDepth(0.0f),
+                             mShadowCastIntensity(0.0f), mIsHiRes(0), mAlignAxis{.x = 0.0f, .y = 0.0f, .z = 0.0f}, mAlignmentMode(0), mStartTexFrameIndex(0),
+                             mEndTexFrameIndex(0), mEndTexAnimFrame(-1), mNumTextureTilesX(1), mNumTextureTilesY(1), mClipRegionData(nullptr), mProps(),
+                             mShader(), mTrimCornersAmount(0.0f), mTrimCorners(false), field_69D{0, 0}, field_69F(0)
     {}
 
 
@@ -226,46 +226,43 @@ namespace rage
         {
             WriteToJsonBase(writer);
 
-            writer.String("field_140");
-            writer.Double((double)field_140);
+            writer.String("FlipChanceU");
+            writer.Double((double)mFlipChanceU);
 
-            writer.String("field_144");
-            writer.Double((double)field_144);
+            writer.String("FlipChanceV");
+            writer.Double((double)mFlipChanceV);
 
-            writer.String("field_148");
-            writer.Double((double)field_148);
+            writer.String("NearClipDist");
+            writer.Double((double)mNearClipDist);
 
-            writer.String("field_14C");
-            writer.Int(field_14C);
+            writer.String("IsScreenSpace");
+            writer.Int(mIsScreenSpace);
 
-            writer.String("field_150");
-            writer.Double((double)field_150);
+            writer.String("FarClipDist");
+            writer.Double((double)mFarClipDist);
 
-            writer.String("field_154");
-            writer.Double((double)field_154);
+            writer.String("ProjectionDepth");
+            writer.Double((double)mProjectionDepth);
 
-            writer.String("field_158");
-            writer.Double((double)field_158);
+            writer.String("ShadowCastIntensity");
+            writer.Double((double)mShadowCastIntensity);
 
-            writer.String("field_15C");
-            writer.Int(field_15C);
+            writer.String("IsHiRes");
+            writer.Int(mIsHiRes);
 
-            writer.String("field_16C");
-            writer.Int(field_16C);
+            writer.String("AlignmentMode");
+            writer.Int(mAlignmentMode);
 
             writer.SetFormatOptions(rapidjson::kFormatSingleLineArray);
-            writer.String("AxisAlligned");
+            writer.String("AlignAxis");
             writer.StartArray();
             {
-                writer.Double((double)mAxisAlligned.x);
-                writer.Double((double)mAxisAlligned.y);
-                writer.Double((double)mAxisAlligned.z);
+                writer.Double((double)mAlignAxis.x);
+                writer.Double((double)mAlignAxis.y);
+                writer.Double((double)mAlignAxis.z);
             }
             writer.EndArray();
             writer.SetFormatOptions(rapidjson::kFormatDefault);
-
-            writer.String("field_16C");
-            writer.Int(field_15C);
 
             writer.String("StartTexFrameIndex");
             writer.Int(mStartTexFrameIndex);
@@ -282,8 +279,8 @@ namespace rage
             writer.String("Props");
             mProps.WriteToJson(writer);
 
-            writer.String("TrimCornersAmmount");
-            writer.Double((double)mTrimCornersAmmount);
+            writer.String("TrimCornersAmount");
+            writer.Double((double)mTrimCornersAmount);
 
             writer.String("Shader");
             mShader.WriteToJson(writer);
@@ -295,24 +292,22 @@ namespace rage
     {
         LoadFromJsonBase(object);
 
-        field_140 = object["field_140"].GetFloat();
-        field_144 = object["field_144"].GetFloat();
-        field_148 = object["field_148"].GetFloat();
+        mFlipChanceU = object["FlipChanceU"].GetFloat();
+        mFlipChanceV = object["FlipChanceV"].GetFloat();
+        mNearClipDist = object["NearClipDist"].GetFloat();
 
-        field_14C = object["field_14C"].GetInt();
+        mIsScreenSpace = object["IsScreenSpace"].GetInt();
 
-        field_150 = object["field_150"].GetFloat();
-        field_154 = object["field_154"].GetFloat();
-        field_158 = object["field_158"].GetFloat();
+        mFarClipDist = object["FarClipDist"].GetFloat();
+        mProjectionDepth = object["ProjectionDepth"].GetFloat();
+        mShadowCastIntensity = object["ShadowCastIntensity"].GetFloat();
 
-        field_15C = object["field_15C"].GetInt();
-        field_16C = object["field_16C"].GetInt();
+        mIsHiRes = object["IsHiRes"].GetInt();
+        mAlignmentMode = object["AlignmentMode"].GetInt();
 
-        mAxisAlligned.x = object["AxisAlligned"].GetArray()[0].GetFloat();
-        mAxisAlligned.y = object["AxisAlligned"].GetArray()[1].GetFloat();
-        mAxisAlligned.z = object["AxisAlligned"].GetArray()[2].GetFloat();
-
-        field_15C = object["field_16C"].GetInt();
+        mAlignAxis.x = object["AlignAxis"].GetArray()[0].GetFloat();
+        mAlignAxis.y = object["AlignAxis"].GetArray()[1].GetFloat();
+        mAlignAxis.z = object["AlignAxis"].GetArray()[2].GetFloat();
 
         mStartTexFrameIndex = object["StartTexFrameIndex"].GetInt();
         mEndTexFrameIndex = object["EndTexFrameIndex"].GetInt();
@@ -321,7 +316,7 @@ namespace rage
         mNumTextureTilesX = object["NumTextureTilesX"].GetInt();
         mNumTextureTilesY = object["NumTextureTilesY"].GetInt();
 
-        mTrimCornersAmmount = object["TrimCornersAmmount"].GetFloat();
+        mTrimCornersAmount = object["TrimCornersAmount"].GetFloat();
 
         JsonHelpers::LoadMemberObject(mProps, object, "Props");
         JsonHelpers::LoadMemberObject(mShader, object, "Shader");
@@ -329,7 +324,7 @@ namespace rage
 
 
     ptxModel::ptxModel() : ptxRule("ptxmodel"), mRotation{.x = 0.0f, .y = 0.0f, .z = 0.0f}, field_14C{0, 0, 0, 0}, mRotationVar{.x = 0.0f, .y = 0.0f, .z = 0.0f},
-                           field_15C{0, 0, 0, 0}, mRotationSpeedVar{.x = 0.0f, .y = 0.0f}, mDrawables(), field_170(nullptr), mProps(), field_698{0, 0, 0, 0, 0, 0, 0}, field_69F(0)
+                           field_15C{0, 0, 0, 0}, mRotationSpeedVar{.x = 0.0f, .y = 0.0f}, mDrawables(), field_170(nullptr), mProps(), field_698{0, 0, 0, 0, 0, 0, 0}, mDisableDraw(0)
     {}
 
     void ptxModel::AssignDrawables(pgDictionary<rmcDrawable>& drawables)
@@ -389,8 +384,8 @@ namespace rage
             writer.String("Props");
             mProps.WriteToJson(writer);
 
-            writer.String("field_69F");
-            writer.Int(field_69F);
+            writer.String("DisableDraw");
+            writer.Int(mDisableDraw);
         }
         writer.EndObject();
     }
@@ -420,7 +415,7 @@ namespace rage
             }
 
             JsonHelpers::LoadMemberObject(mProps, object, "Props");
-            field_69F = object["field_69F"].GetInt();
+            mDisableDraw = object["DisableDraw"].GetInt();
         }
     }
 }

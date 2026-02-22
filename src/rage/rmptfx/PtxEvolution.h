@@ -66,20 +66,20 @@ namespace rage
     {
         void AddToLayout(RSC5Layout& layout, uint32_t depth)
         {
-            layout.AddObject(field_0, RSC5Layout::eBlockType::VIRTUAL, 40);
+            layout.AddObject(mData, RSC5Layout::eBlockType::VIRTUAL, 40);
         }
 
         void SerializePtrs(RSC5Layout& layout, datResource& rsc, uint32_t depth)
         {
-            layout.SerializePtr(field_0, 40);
+            layout.SerializePtr(mData, 40);
         }
 
         inline void Place(void* that, const datResource& rsc)
         {
-            rsc.PointerFixUp(field_0);
+            rsc.PointerFixUp(mData);
         }
 
-        uint8_t* field_0;
+        uint8_t* mData;
         //count? but why are there 2? idk. always 40
         uint16_t field_4;
         uint16_t field_8;
@@ -125,7 +125,7 @@ namespace rage
     class ptxEvoProp
     {
     public:
-        ptxEvoProp() : mRegID(-1) 
+        ptxEvoProp() : mEvolutionIdx(-1) 
         {}
 
         ptxEvoProp(const datResource& rsc) : mKeyFrames(rsc) 
@@ -143,7 +143,7 @@ namespace rage
         void LoadFromJson(rapidjson::GenericObject<true, rapidjson::Value>& object);
 
         rmPtfxKeyframe mKeyFrames;
-        int32_t mRegID;
+        int32_t mEvolutionIdx;
     };
     ASSERT_SIZE(ptxEvoProp, 0x2C);
 
@@ -152,7 +152,7 @@ namespace rage
     {
         ptxEvoHashIndexList(uint16_t count) : mList(count)
         {
-            field_0 = 1;
+            mData = 1;
         }
 
         void AddToList(const uint32_t hash, const uint32_t index)
@@ -177,7 +177,7 @@ namespace rage
             mList.Insert(newEntryIndex) = std::pair<uint32_t, uint32_t>(hash, index);
         }
 
-        int8_t field_0;
+        int8_t mData;
         //first is a hash of ptxEvolutionGroup::mEvoList::mEvoName
         //second is an index into ptxEvolutionGroup::mEvoList
         atArray<std::pair<uint32_t, uint32_t>> mList;

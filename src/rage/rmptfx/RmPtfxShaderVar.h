@@ -27,7 +27,7 @@ namespace rage
             COUNT
         };
 
-        rmPtfxShaderVar() : field_4(0), mName(nullptr), mIndex(0), field_10(0), field_11(1), mType(eVarType::COUNT) {};
+        rmPtfxShaderVar() : mHashName(0), mName(nullptr), mIndex(0), mIsKeyframeable(0), mOwnsInfo(1), mType(eVarType::COUNT) {};
 
         rmPtfxShaderVar(const datResource& rsc)
         {
@@ -72,11 +72,11 @@ namespace rage
         void Place(void* that, const datResource& rsc);
         uint32_t GetObjectSize() const;
 
-        int32_t field_4;
+        uint32_t mHashName;
         char* mName;
         int32_t mIndex;
-        int8_t field_10;
-        int8_t field_11;
+        int8_t mIsKeyframeable;
+        int8_t mOwnsInfo;
         eVarType mType;
         int8_t field_13;
         int8_t field_14[12];
@@ -93,11 +93,11 @@ namespace rage
             writer.String("Index");
             writer.Int(mIndex);
 
-            writer.String("field_10");
-            writer.Int(field_10);
+            writer.String("IsKeyframeable");
+            writer.Int(mIsKeyframeable);
 
-            writer.String("field_11");
-            writer.Int(field_11);
+            writer.String("OwnsInfo");
+            writer.Int(mOwnsInfo);
             
             writer.String("field_13");
             writer.Int(field_13);
@@ -109,8 +109,8 @@ namespace rage
             mType = StringToType(object["Type"].GetString());
             mIndex = object["Index"].GetInt();
 
-            field_10 = object["field_10"].GetInt();
-            field_11 = object["field_11"].GetInt();
+            mIsKeyframeable = object["IsKeyframeable"].GetInt();
+            mOwnsInfo = object["OwnsInfo"].GetInt();
             field_13 = object["field_13"].GetInt();
         }
     };
